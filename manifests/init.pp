@@ -108,18 +108,18 @@ class nomadproject (
     notify  => Service['nomad'],
   }
 
-  file { '/etc/init/nomad.conf':
+  file { '/usr/lib/systemd/system/nomad.service':
     ensure  => present,
     owner   => root,
     group   => root,
-    mode    => '0444',
-    content => template('nomadproject/upstart.erb'),
+    mode    => '0644',
+    content => template('nomad/nomad.service.erb'),
   }
 
   service { 'nomad' :
     ensure  => running,
     enable  => true,
-    require => File['/etc/nomad.conf', '/etc/init/nomad.conf'],
+    require => File['/etc/nomad.d/config.hcl', '/usr/lib/systemd/system/nomad.service'],
   }
 
 }
