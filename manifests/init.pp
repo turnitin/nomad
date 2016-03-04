@@ -1,4 +1,4 @@
-# == Class: nomadproject
+# == Class: nomad
 #
 # Full description of class nomadproject here.
 #
@@ -7,7 +7,7 @@
 # Document parameters here.
 #
 # [*version*]
-#   Version of nomad to install defaults to 0.2.3
+#   Version of nomad to install defaults to 0.3.0
 #
 # [*user*]
 #   Run user defaults to root
@@ -27,18 +27,19 @@
 # === Authors
 #
 # Chris Mague <github@mague.com>
+# Jason Temple <jtemple@turnitin.com>
 #
 # === Copyright
 #
 # Copyright 2015 Your name here, unless otherwise noted.
 #
-class nomadproject (
-  $user             = 'root',
-  $group            = 'root',
-  $version          = '0.2.3',
+class nomad (
+  $user             = 'nomad',
+  $group            = 'nomad',
+  $version          = '0.3.0',
   $port             = '4647',
-  $bin_dir          = '/usr/bin',
-  $data_dir         = '/opt/nomad',
+  $bin_dir          = '/usr/sbin',
+  $data_dir         = '/var/nomad',
   $nomad_role       = 'client',
   $datacenter       = 'nomad',
   $region           = 'nomad',
@@ -59,19 +60,7 @@ class nomadproject (
   if ($nomad_role == 'client') and ( size($server_list) == 0 ) {
     notify { "WARNING: Set as ${nomad_role}, but no servers set => ${server_list}": }
   }
-
-  if ($nomad_role == 'server') {
-    file { '/etc/example_job.nomad':
-      ensure => present,
-      owner  => root,
-      group  => root,
-      mode   => '0644',
-      source => 'puppet:///modules/nomadproject/example_job.nomad',
-    }
-  }
     
-
-
   validate_hash($config_hash)
   $final_sets = merge($config_default, $config_hash)
 
@@ -83,6 +72,16 @@ class nomadproject (
     owner  => $user,
     group  => $group,
     mode   => '0755',
+  }
+
+  group { $group:
+    ensure => 'present',
+  }
+
+  user { $user:
+    ensure   => 'present',
+    password => '!!',
+    groups   => [$group, nomad],
   }
 
   staging::file { 'nomad.zip':
@@ -98,12 +97,19 @@ class nomadproject (
     mode  => '0555',
   }
 
-  file { '/etc/nomad.conf':
+  file { '/etc/nomad.d':
+    ensure => 'directory',
+    owner  => '$user',
+    group  => '$group',
+    mode   => '0755',
+  }
+
+  file { '/etc/nomad.d/config.hcl':
     ensure  => present,
-    owner   => root,
-    group   => root,
+    owner   => $user,
+    group   => $group,
     mode    => '0644',
-    content => template('nomadproject/nomad.erb'),
+    content => template('nomad/nomad.erb'),
     require => File["${bin_dir}/nomad"],
     notify  => Service['nomad'],
   }
