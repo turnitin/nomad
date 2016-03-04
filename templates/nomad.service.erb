@@ -8,7 +8,7 @@ Environment=GOMAXPROCS=2
 User=nomad
 Group=nomad
 Restart=on-failure
-ExecStart=/usr/sbin/nomad agent -config=/etc/nomad.d
+ExecStart=/usr/sbin/nomad agent -config=/etc/nomad.d/config.hcl
 ExecReload=/bin/kill -HUP $MAINPID
 KillSignal=SIGINT
 
