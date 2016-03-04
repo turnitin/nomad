@@ -40,9 +40,9 @@ class nomad (
   $port             = '4647',
   $bin_dir          = '/usr/sbin',
   $data_dir         = '/var/nomad',
-  $nomad_role       = 'client',
-  $datacenter       = 'nomad',
-  $region           = 'nomad',
+  $nomad_role       = '',
+  $datacenter       = 'devstk',
+  $region           = '',
   $bind_interface   = '',
   $bootstrap_expect = 1,
   $server_list      = [],
@@ -55,6 +55,13 @@ class nomad (
     'datacenter' => $datacenter,
     'name'       => $::hostname,
     'bind_addr'  => $::ipaddress,
+  }
+
+  if $::hostname =~ /^nomad(\d+)\./ {
+    $nomad_role = 'server'
+  }
+  else {
+    $nomad_role = 'client'
   }
 
   if ($nomad_role == 'client') and ( size($server_list) == 0 ) {
