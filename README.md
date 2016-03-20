@@ -15,7 +15,7 @@ Install Nomad from Hashicorp
 
 ## Module Description
 
-More information to comme
+Forked and migrated to systemd standard
 
 ## Setup
 
@@ -27,7 +27,7 @@ More information to comme
 
 requires staging and stdlib 
 
-### Beginning with nomadproject
+### Beginning with nomad
 
 
 More later
