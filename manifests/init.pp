@@ -36,11 +36,10 @@
 class nomad (
   $user             = 'nomad',
   $group            = 'nomad',
-  $version          = '0.3.0',
+  $version          = '0.3.1',
   $port             = '4647',
   $bin_dir          = '/usr/sbin',
   $data_dir         = '/var/nomad',
-  $nomad_role       = '',
   $datacenter       = 'devstk',
   $region           = '',
   $bind_interface   = '',
@@ -57,7 +56,7 @@ class nomad (
     'bind_addr'  => $::ipaddress,
   }
 
-  if $::hostname =~ /^nomad(\d+)\./ {
+  if $::hostname =~ /^nomad/ {
     $nomad_role = 'server'
   }
   else {
