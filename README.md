@@ -1,4 +1,4 @@
-# nomadproject
+# nomad puppet module
 
 #### Table of Contents
 
